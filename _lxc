@@ -73,6 +73,30 @@ _lxc() {
             {--help,--help}'[Show help]' \
             '1: :__lxc_file_commands' \
             && ret=0
+            case $words[2] in
+              (push)
+                _arguments -C \
+                  '2: :_files' \
+                  '3: :__lxc_containers_all' \
+                  && ret=0
+                ;;
+              (pull)
+                _arguments -C \
+                  '2: :__lxc_containers_all' \
+                  '3: :_files' \
+                  && ret=0
+                ;;
+              (edit)
+                _arguments -C \
+                  '2: :__lxc_containers_all' \
+                  && ret=0
+                ;;
+              (delete)
+                _arguments -C \
+                  '2: :__lxc_containers_all' \
+                  && ret=0
+                ;;
+            esac
           ;;
         (help)
           _arguments -C \
@@ -241,7 +265,8 @@ __lxc_file_commands() {
     _c=(
       'pull:Pull file from container'
       'push:Push file to container'
-      'edit:Edit file on container'
+      'delete:Delete files in containers.'
+      'edit:Edit files in containers using the default text editor'
     )
     _describe -t file_commands 'File commands' _c
 }
@@ -262,16 +287,6 @@ __lxc_image_commands() {
 }
 
 
-__lxc_file_commands() {
-    local -a _c
-    _c=(
-      'pull:Pull file from container'
-      'push:Push file to container'
-      'edit:Edit file on container'
-    )
-    _describe -t file_commands 'Image alias commands' _c
-}
-
 __lxc_containers_running () {
     local -a _containers
     _containers=(${(@f)"$(_call_program repositories lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'RUNNING$' | sed -e "s/RUNNING//")"})
@@ -291,5 +306,3 @@ __lxc_containers_all () {
 }
 
 compdef _lxc lxc
-
-
