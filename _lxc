@@ -87,10 +87,8 @@ _lxc() {
                 ;;
                 (show|edit|delete)
                   if [ $#words[@] -gt 4 ]; then
-                    # _arguments -C \
-                    #   "*:Templates:($(__get_lxc_device_keys $words[4]))"
                     _arguments -C \
-                      "*:Templates:($(__get_lxc_templates $words[4]))"
+                      "*:Templates:($(__get_lxc_templates_by_container $words[4]))"
                   fi
                   _arguments -C \
                     '3:containers:__lxc_containers_all'
@@ -108,7 +106,7 @@ _lxc() {
                 (add)
                   if [ $#words[@] -gt 4 ]; then
                     _arguments -C \
-                      "*:keys:_sep_parts '$(__get_lxc_device_keys $words[5])' ="
+                      "*:keys:_sep_parts '$(__get_lxc_keys_by_device $words[5])' ="
                   fi
                   _arguments -C \
                     '3:containers:__lxc_containers_all' \
@@ -118,7 +116,7 @@ _lxc() {
                   if [ $#words[@] -eq 6 ]; then
                     local type
                     type=$(lxc config device get $words[4] $words[5] type)
-                    _arguments -C "*:keys:($(__get_lxc_device_keys $type))"
+                    _arguments -C "*:keys:($(__get_lxc_keys_by_device $type))"
                   fi
                   selected_container=$words[4]
                   _arguments -C \
@@ -129,7 +127,7 @@ _lxc() {
                   if [ $#words[@] -eq 6 ]; then
                     local type
                     type=$(lxc config device get $words[4] $words[5] type)
-                    _arguments -C "*:keys:($(__get_lxc_device_keys $type))"
+                    _arguments -C "*:keys:($(__get_lxc_keys_by_device $type))"
                   fi
                   selected_container=$words[4]
                   _arguments -C \
@@ -141,7 +139,7 @@ _lxc() {
                     local type
                     type=$(lxc config device get $words[4] $words[5] type)
                     _arguments -C \
-                      "*:keys:_sep_parts '$(__get_lxc_device_keys $type)' ="
+                      "*:keys:_sep_parts '$(__get_lxc_keys_by_device $type)' ="
                   fi
                   selected_container=$words[4]
                   _arguments -C \
@@ -341,8 +339,44 @@ _lxc() {
             $opt_common
         ;;
         (profile)
-          # TODO: complete profile
+          case $words[2] in
+            (add)
+              _arguments -C \
+                '2: :__lxc_containers_all' \
+                '3: :__lxc_profiles' \
+            ;;
+            (assign|apply)
+              _arguments -C \
+                '2: :__lxc_containers_all' \
+                "3: :_values -s , Profiles $(__get_lxc_profiles)" \
+            ;;
+            (copy|cp)
+              _arguments -C \
+                '2: :__lxc_profiles' \
+                '3: :__lxc_profiles' \
+            ;;
+            (delete|rm|edit|show)
+              _arguments -C \
+                '2: :__lxc_profiles' \
+            ;;
+            (get|set|unset)
+              # TODO: complete profile keys
+              _arguments -C \
+                '2: :__lxc_profiles' \
+            ;;
+            (list|ls)
+              # TODO: complete container profiles
+              _arguments -C \
+                '2: :__lxc_remotes' \
+            ;;
+            (rename|mv)
+              # TODO: complete container profiles
+              _arguments -C \
+                '2: :__lxc_profiles' \
+            ;;
+          esac
           _arguments -C \
+            '1: :__lxc_profile_commands' \
             $opt_common
         ;;
         (publish)
@@ -585,6 +619,26 @@ __lxc_image_alias_commands() {
   _describe -t commands 'Image alias commands' _c
 }
 
+__lxc_profile_commands() {
+  local -a _c
+  _c=(
+    'add:Add profiles to containers'
+    'assign:Assign sets of profiles to containers'
+    'copy:Copy profiles'
+    'create:Create profiles'
+    'delete:Delete profiles'
+    'device:Manage container devices'
+    'edit:Edit profile configurations as YAML'
+    'get:Get values for profile configuration keys'
+    'list:List profiles'
+    'remove:Remove profiles from containers'
+    'rename:Rename profiles'
+    'set:Set profile configuration keys'
+    'show:Show profile configurations'
+    'unset:Unset profile configuration keys'
+  )
+  _describe -t commands 'Profile commands' _c
+}
 __lxc_remote_commands() {
   local -a _c
   _c=(
@@ -686,10 +740,16 @@ __lxc_aliases () {
 __lxc_remotes () {
   local -a _l
   _l=(${(@f)"$(_call_program remotes lxc remote list | tail -n +4 | egrep -e '^\|' | sed -e 's/(default)//' | awk '{print $2 ":" $4}')"})
-  _describe -t containers 'Remotes' _l
+  _describe -t remotes 'Remotes' _l
 }
 
-__get_lxc_device_keys () {
+__lxc_profiles () {
+  local -a _l
+  _l=(${(@f)"$(_call_program profiles lxc profile list | tail -n +4 | egrep -e '^\|' | awk '{print $2 ":used by " $4 " containers" }' )"})
+  _describe -t profiles 'Profiles' _l
+}
+
+__get_lxc_keys_by_device () {
   typeset -A hash
   hash[nic]="(nictype limits.ingress limits.egress limits.max name host_name hwaddr mtu \
     parent vlan ipv4.address ipv6.address security.mac_filtering maas.subnet.ipv4 maas.subnet.ipv6)"
@@ -699,13 +759,16 @@ __get_lxc_device_keys () {
   hash[unix-block]="(source path major minor uid gid mode required)"
   hash[usb]="(vendorid productid uid gid mode required)"
   hash[gpu]="(vendorid productid id pci uid gid mode)"
-  # hash[proxy]="(listen bind connect)"
-  hash[proxy]="'listen[listen]' 'bind[liste]' 'connect[lidwa]'"
+  hash[proxy]="(listen bind connect)"
   echo "$hash[$1]"
 }
 
-__get_lxc_templates () {
+__get_lxc_templates_by_container () {
   lxc config template list $1 | tail -n +4 | egrep '^\|' | awk '{print $2}'
+}
+
+__get_lxc_profiles () {
+  lxc profile list | tail -n +4 | egrep -e '^\|' | awk '{print $2}' | paste -sd " "
 }
 
 compdef _lxc lxc
