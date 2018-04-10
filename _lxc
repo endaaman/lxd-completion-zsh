@@ -254,13 +254,13 @@ _lxc() {
         ;;
         (launch|init)
           _arguments -C \
-            {-c,--config}'=[Config key/value to apply to the new container (= map[])]' \
+            {-c,--config=}'[Config key/value to apply to the new container (= map\[\])]' \
             {-e,--ephemeral}'[Ephemeral container]' \
-            {-n,--network}'[Network name]' \
-            {-p,--profile}'=[Profile to apply to the new container]' \
-            {-s,--storage}'=[Storage pool name]' \
-            '-t=[Instance type]' \
+            {-n,--network=}'[Network name]' \
+            {-p,--profile=}'[Profile to apply to the new container]' \
+            {-s,--storage=}'[Storage pool name]' \
             '--target=[Node name]' \
+            {-t,--type=}'[Instance type]' \
             $opt_common
         ;;
         (list)
