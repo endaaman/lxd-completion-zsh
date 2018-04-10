@@ -11,7 +11,6 @@ _lxc() {
     '--debug[Enable debug mode]' \
     '--verbose[Enable verbose mode]' \
     '--force-local[Force using the local unix socket]' \
-    '--no-alias[Ignore aliases when determining what command to run]'
   )
   local opt_container_control=(
     '--all[Run command against all containers]' \
@@ -242,10 +241,47 @@ _lxc() {
             $opt_common
         ;;
         (image)
-          # TODO: complete image
+          case $words[2] in
+            (alias)
+              case $words[3] in
+                (create)
+                  _arguments -C \
+                    '4: :__lxc_images_as_fingerprint'
+                ;;
+                (delete|rename)
+                  _arguments -C \
+                    '3: :__lxc_images_as_alias'
+                ;;
+              esac
+              _arguments -C \
+                '2: :__lxc_image_alias_commands'
+            ;;
+            (delete|refresh)
+              _arguments -C \
+                '*: :__lxc_images_as_fingerprint'
+            ;;
+            (edit|show|info|export)
+              _arguments -C \
+                '2: :__lxc_images_as_fingerprint'
+            ;;
+            (copy)
+              _arguments -C \
+                '2: :__lxc_remotes'
+            ;;
+            (list)
+              l="'Columns' 'l[Shortest image alias (and optionally number of other aliases)]' \
+                'L[Newline-separated list of all image aliases]' 'f[Fingerprint]' \
+                'p[Whether image is public]' 'd[Description]' 'a[Architecture]' \
+                's[Size]' 'u[Upload date]'"
+              _arguments -C \
+                '2: :()' \
+                {-c,--columns=}"[Columns (default lfpdasu)]:Columns:_values -s '' $l" \
+                '--format=[Format]:Format:(csv json table yaml)' \
+                $opt_common
+            ;;
+          esac
           _arguments -C \
             '1: :__lxc_image_commands' \
-            $opt_common
         ;;
         (info)
           _arguments -C \
@@ -254,6 +290,7 @@ _lxc() {
         ;;
         (launch|init)
           _arguments -C \
+            '1: :__lxc_images' \
             {-c,--config=}'[Config key/value to apply to the new container (= map\[\])]' \
             {-e,--ephemeral}'[Ephemeral container]' \
             {-n,--network=}'[Network name]' \
@@ -323,16 +360,21 @@ _lxc() {
           case $words[2] in
             (set-default|set-url|rename|remove)
               _arguments -C \
-                '2: :__lxc_remotes_all' \
+                '2: :__lxc_remotes' \
+                $opt_common
+            ;;
+            (add)
+              _arguments -C \
+                '2: :()' \
+                '--accept-certificate[Accept certificate]' \
+                '--auth-type=[Server authentication type (tls or macaroons)]:Auth type:(tls macaroons)' \
+                '--password[Remote admin password]' \
+                '--protocol=[Server protocol (lxd or simplestreams)]:Protocol:(tls macaroons)' \
+                '--public[Public image server]' \
             ;;
           esac
-          _arguments \
+          _arguments -C \
             '1: :__lxc_remote_commands' \
-            '--accept-certificate[Accept certificate]' \
-            '--auth-type=[Server authentication type (tls or macaroons)]:Auth type:(tls macaroons)' \
-            '--password[Remote admin password]' \
-            '--protocol=[Server protocol (lxd or simplestreams)]:Protocol:(tls macaroons)' \
-            '--public[Public image server]' \
             $opt_common
         ;;
         (restart)
@@ -532,6 +574,16 @@ __lxc_image_commands() {
   _describe -t commands 'Image commands' _c
 }
 
+__lxc_image_alias_commands() {
+  local -a _c
+  _c=(
+    'create:Create a new alias for an existing image'
+    'rename:Rename an alias'
+    'delete:Delete an alias'
+    'list:List the aliases. Filters may be part of the image hash or part of the image alias name'
+  )
+  _describe -t commands 'Image alias commands' _c
+}
 
 __lxc_remote_commands() {
   local -a _c
@@ -547,10 +599,9 @@ __lxc_remote_commands() {
   _describe -t commands 'Remote commands' _c
 }
 
-
 __lxc_devices_by_container () {
   local -a _devices
-  _devices=(${(f)"$(_call_program commands lxc config device list $selected_container)"})
+  _devices=(${(f)"$(_call_program devices lxc config device list $selected_container)"})
   _describe "Devices of $selected_container" _devices
 }
 
@@ -594,32 +645,48 @@ __lxc_device_types () {
 
 __lxc_containers_running () {
   local -a _containers
-  _containers=(${(@f)"$(_call_program repositories lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'RUNNING$' | sed -e "s/RUNNING//")"})
+  _containers=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'RUNNING$' | sed -e "s/RUNNING//")"})
   _describe -t containers 'Running Containers' _containers
 }
 
 __lxc_containers_stopped () {
   local -a _containers
-  _containers=(${(@f)"$(_call_program repositories lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'STOPPED$' | sed -e "s/STOPPED//")"})
+  _containers=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'STOPPED$' | sed -e "s/STOPPED//")"})
   _describe -t containers 'Stopped containers' _containers
 }
 
 __lxc_containers_all () {
   local -a _containers
-  _containers=(${(@f)"$(_call_program repositories lxc list --fast | tail -n +4 | awk '{print $2}' | egrep -v '^(\||^$)')"})
+  _containers=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2}' | egrep -v '^(\||^$)')"})
   _describe -t containers 'All containers' _containers
 }
 
-__lxc_aliases () {
-  local -a _containers
-  _containers=(${(@f)"$(_call_program repositories lxc alias list | tail -n +4 | egrep '^\|' | awk '{print $2 ":" $4}')"})
-  _describe -t aliases 'Aliases' _containers
+__lxc_images_as_fingerprint () {
+  local -a _l
+  _l=(${(@f)"$(_call_program images lxc image list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[\ \t]+/,"",a[i]);sub(/[\ \t]+$/,"",a[i]);}; (a[2]=="") ? b=" (not aliased)" : b=" (aliased as " a[2] ")" ; print a[3] ":" a[5] b }' )"})
+  _describe -t images_as_fingerprint 'Images as fingerprint' _l
 }
 
-__lxc_remotes_all () {
-  local -a _containers
-  _containers=(${(@f)"$(_call_program repositories lxc remote list | tail -n +4 | egrep -e '^\|' | sed -e 's/(default)//' | awk '{print $2 ":" $4}')"})
-  _describe -t containers 'Remotes' _containers
+__lxc_images_as_alias () {
+  _l=(${(@f)"$(_call_program images lxc image alias list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[\ \t]+/,"",a[i]);sub(/[\ \t]+$/,"",a[i]);}; (a[4]=="") ? b="" : b=" - " a[4] ;print a[2] ":" a[3] b }' )"})
+  _describe -t images_as_alias 'Images as alias' _l
+}
+
+__lxc_images () {
+  __lxc_images_as_alias
+  __lxc_images_as_fingerprint
+}
+
+__lxc_aliases () {
+  local -a _l
+  _l=(${(@f)"$(_call_program aliases lxc alias list | tail -n +4 | egrep '^\|' | awk '{print $2 ":" $4}')"})
+  _describe -t aliases 'Aliases' _l
+}
+
+__lxc_remotes () {
+  local -a _l
+  _l=(${(@f)"$(_call_program remotes lxc remote list | tail -n +4 | egrep -e '^\|' | sed -e 's/(default)//' | awk '{print $2 ":" $4}')"})
+  _describe -t containers 'Remotes' _l
 }
 
 __get_lxc_device_keys () {
