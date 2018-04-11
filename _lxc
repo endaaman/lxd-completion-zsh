@@ -284,6 +284,8 @@ _lxc() {
         (info)
           _arguments -C \
             '1:containers:__lxc_containers_all' \
+            '--resources[Show the resources available to the server]' \
+            "--show-log[Show the container's last 100 log lines?]" \
             $opt_common
         ;;
         (launch|init)
