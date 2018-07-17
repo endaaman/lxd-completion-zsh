@@ -4,13 +4,21 @@ A [zsh](http://zsh.org) completion for `lxc` command of [LXD](https://linuxconta
 
 ## Installation
 
-With [zplug](http://github.com/zplug/zplug)
+### [Antigen](https://github.com/zsh-users/antigen)
+
+```sh
+antigen bundle endaaman/lxd-completion-zsh↲
+```
+
+### [zplug](https://github.com/zplug/zplug)
 
 ```sh
 zplug 'endaaman/lxd-completion-zsh'
 ```
 
-or put `_lxc` file into your `~/.zsh/completion` directory.
+### Manually
+
+Put `_lxc` file into `$fpath` directory (e.g. defining `fpath=(~/.zsh/completion $fpath)`, place it in `~/.zsh/completion`)
 
 ## TODOs
 
