@@ -42,3 +42,7 @@ Put `_lxc` file into `$fpath` directory (e.g. defining `fpath=(~/.zsh/completion
 - module
   - profile list
   - snapshot list
+
+## License
+
+MIT
