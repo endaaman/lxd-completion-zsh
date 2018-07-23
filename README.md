@@ -7,7 +7,7 @@ A [zsh](http://zsh.org) completion for `lxc` command of [LXD](https://linuxconta
 ### [Antigen](https://github.com/zsh-users/antigen)
 
 ```sh
-antigen bundle endaaman/lxd-completion-zsh↲
+antigen bundle endaaman/lxd-completion-zsh
 ```
 
 ### [zplug](https://github.com/zplug/zplug)
