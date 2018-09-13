@@ -22,26 +22,23 @@ Put `_lxc` file into `$fpath` directory (e.g. defining `fpath=(~/.zsh/completion
 
 ## TODOs
 
-- command
-  - network
-    - network subcommands
-    - network list
-  - operation
-    - operation subcommands
-  - profile
-    - profile list
-  - publish
-    - remote list
+- subcommands completion
   - image
-    - image list
-  - launch/init
-    - profile list
-    - network list
+  - init
+  - launch
   - move
-    - snapshot list
-- module
+  - operation
+  - publish
+  - query
+  - rename
+  - storage
+
+- list completion
   - profile list
   - snapshot list
+  - storage list
+  - network list
+  - operation list
 
 ## License
 

@@ -177,8 +177,9 @@ _lxc() {
         ;;
         (console)
           _arguments -C \
-            '1: :__lxc_containers_running' \
+            '1:containers:__lxc_containers_running' \
             $opt_common
+        ;;
         (copy)
           # TODO: complete copy
           _arguments -C \
@@ -227,10 +228,6 @@ _lxc() {
             "--mode=[Set the file's perms on push]" \
             ''{-p,--create-dirs}'[Create any directories necessary]' \
             ''{-r,--recursive}'[Recursively push or pull files]' \
-            $opt_common
-        ;;
-        (finger)
-          _arguments -C \
             $opt_common
         ;;
         (help)
@@ -320,23 +317,32 @@ _lxc() {
             '1:Directory to put manpage to:_files' \
             $opt_common
         ;;
+        (monitor)
+          _arguments -C \
+            '--loglevel=[Minimum level for log messages]:Log level:(info)' \
+            '--pretty[Pretty rendering]' \
+            '--type=[Event type to listen for]:Type:(lifecycle logging)' \
+            $opt_common
+        ;;
         (move)
           # TODO: complete move
           _arguments -C \
             $opt_common
         ;;
         (network)
-          # TODO: complete network
           _arguments -C \
+            '1: :__lxc_network_commands' \
             $opt_common
         ;;
         (operation)
           # TODO: complete operation
           _arguments -C \
+            '1: :__lxc_operation_commands' \
             $opt_common
         ;;
         (pause)
           _arguments -C \
+            '--all[Run command against all containers]' \
             '1: :__lxc_containers_running' \
             $opt_common
         ;;
@@ -411,6 +417,11 @@ _lxc() {
           esac
           _arguments -C \
             '1: :__lxc_remote_commands' \
+            $opt_common
+        ;;
+        (rename)
+          _arguments -C \
+            '1:containers:__lxc_containers_stopped' \
             $opt_common
         ;;
         (restart)
@@ -641,6 +652,7 @@ __lxc_profile_commands() {
   )
   _describe -t commands 'Profile commands' _c
 }
+
 __lxc_remote_commands() {
   local -a _c
   _c=(
@@ -653,6 +665,39 @@ __lxc_remote_commands() {
     'get-default:Print the default remote'
   )
   _describe -t commands 'Remote commands' _c
+}
+
+__lxc_network_commands() {
+  local -a _c
+  _c=(
+    'attach:Attach network interfaces to containers'
+    'attach-profile:Attach network interfaces to profiles'
+    'create:Create new networks'
+    'delete:Delete networks'
+    'detach:Detach network interfaces from containers'
+    'detach-profile:Detach network interfaces from profiles'
+    'edit:Edit network configurations as YAML'
+    'get:Get values for network configuration keys'
+    'info:Get runtime information on networks'
+    'list:List available networks'
+    'list-leases:List DHCP leases'
+    'rename:Rename networks'
+    'set:Set network configuration keys'
+    'show:Show network configurations'
+    'unset:Unset network configuration keys'
+  )
+  _describe -t commands 'Network commands' _c
+}
+
+
+__lxc_operation_commands() {
+  local -a _c
+  _c=(
+    'delete:Delete a background operation (will attempt to cancel)'
+    'list:List background operations'
+    'show:Show details on a background operation'
+  )
+  _describe -t commands 'Operation commands' _c
 }
 
 __lxc_devices_by_container () {
