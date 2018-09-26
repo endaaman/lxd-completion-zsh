@@ -7,7 +7,7 @@ A [zsh](http://zsh.org) completion for `lxc` command of [LXD](https://linuxconta
 ### [Antigen](https://github.com/zsh-users/antigen)
 
 ```sh
-antigen bundle endaaman/lxd-completion-zsh
+antigen bundle 'endaaman/lxd-completion-zsh'
 ```
 
 ### [zplug](https://github.com/zplug/zplug)
@@ -21,6 +21,8 @@ zplug 'endaaman/lxd-completion-zsh'
 Put `_lxc` file into `$fpath` directory (e.g. defining `fpath=(~/.zsh/completion $fpath)`, place it in `~/.zsh/completion`)
 
 ## TODOs
+
+- add `lxd` command completion
 
 - subcommands completion
   - image
