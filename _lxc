@@ -263,6 +263,10 @@ _lxc() {
               _arguments -C \
                 '2: :__lxc_remotes'
             ;;
+            (import)
+              _arguments -C \
+                '2: :_files'
+            ;;
             (list)
               l="'Columns' 'l[Shortest image alias (and optionally number of other aliases)]' \
                 'L[Newline-separated list of all image aliases]' 'f[Fingerprint]' \
@@ -611,12 +615,14 @@ __lxc_image_commands() {
   _c=(
     'copy:Copy an image from one LXD daemon to another over the network'
     'delete:Delete one or more images from the LXD image store'
+    'import:Import images into the image store'
     'export:Export an image from the LXD image store into a distributable tarball'
     'info:Print everything LXD knows about a given image'
     'list:List images in the LXD image store. Filters may be of the'
     'show:Yaml output of the user modifiable properties of an image'
     'edit:Edit image, either by launching external editor or reading STDIN'
     'alias:Manage alias for image in the LXD image store'
+    'refresh:Refresh images'
   )
   _describe -t commands 'Image commands' _c
 }
