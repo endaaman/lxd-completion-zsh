@@ -466,6 +466,22 @@ _lxc() {
             $opt_common
         ;;
         (storage)
+          case $words[2] in
+            (delete|edit|get|info|set|unset)
+              _arguments -C \
+                '2: :__lxc_storages'
+            ;;
+            (volume)
+              case $words[3] in
+                (list)
+                  _arguments -C \
+                    '3: :__lxc_storages'
+                ;;
+              esac
+              _arguments -C \
+                '2: :__lxc_storage_volume_commands'
+            ;;
+          esac
           _arguments -C \
             '1: :__lxc_storage_commands' \
             $opt_common
@@ -725,6 +741,32 @@ __lxc_storage_commands() {
   _describe -t commands 'Storage commands' _c
 }
 
+__lxc_storage_volume_commands() {
+  local -a _c
+  _c=(
+    'attach:Attach new storage volumes to containers'
+    'attach-profile:Attach new storage volumes to profiles'
+    'copy:Copy storage volumes'
+    'create:Create new custom storage volumes'
+    'delete:Delete storage volumes'
+    'detach:Detach storage volumes from containers'
+    'detach-profile Detach storage volumes from profiles'
+    'edit:Edit storage volume configurations as YAML'
+    'get:Get values for storage volume configuration keys'
+    'list:List storage volumes'
+    'move:Move storage volumes between pools'
+    'rename:Rename storage volumes and storage volume snapshots'
+    'restore:Restore storage volume snapshots'
+    'set:Set storage volume configuration keys'
+    'show:Show storage volum configurations'
+    'snapshot:Snapshot storage volumes'
+    'unset:Unset storage volume configuration keys'
+  )
+  _describe -t commands 'Storage volume commands' _c
+
+
+}
+
 __lxc_devices_by_container () {
   local -a _devices
   _devices=(${(f)"$(_call_program devices lxc config device list $selected_container)"})
@@ -819,6 +861,12 @@ __lxc_profiles () {
   local -a _l
   _l=(${(@f)"$(_call_program profiles lxc profile list | tail -n +4 | egrep -e '^\|' | awk '{print $2 ":used by " $4 " containers" }' )"})
   _describe -t profiles 'Profiles' _l
+}
+
+__lxc_storages () {
+  local -a _l
+  _l=(${(@f)"$(_call_program profiles lxc storage list | tail -n +4 | egrep -e '^\|' | awk '{print $2 }')"})
+  _describe -t storages 'Storages' _l
 }
 
 __get_lxc_keys_by_device () {
