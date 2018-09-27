@@ -182,8 +182,6 @@ _lxc() {
         ;;
         (copy)
           # TODO: complete copy
-          _arguments -C \
-            $opt_common
         ;;
         (delete)
           _arguments -C \
@@ -467,6 +465,11 @@ _lxc() {
             $opt_container_control \
             $opt_common
         ;;
+        (storage)
+          _arguments -C \
+            '1: :__lxc_storage_commands' \
+            $opt_common
+        ;;
       esac
     ;;
   esac
@@ -695,7 +698,6 @@ __lxc_network_commands() {
   _describe -t commands 'Network commands' _c
 }
 
-
 __lxc_operation_commands() {
   local -a _c
   _c=(
@@ -704,6 +706,23 @@ __lxc_operation_commands() {
     'show:Show details on a background operation'
   )
   _describe -t commands 'Operation commands' _c
+}
+
+__lxc_storage_commands() {
+  local -a _c
+  _c=(
+    'create:Create storage pools'
+    'delete:Delete storage pools'
+    'edit:Edit storage pool configurations as YAML'
+    'get:Get values for storage pool configuration keys'
+    'info:Show useful information about storage pools'
+    'list:List available storage pools'
+    'set:Set storage pool configuration keys'
+    'show:Show storage pool configurations and resources'
+    'unset:Unset storage pool configuration keys'
+    'volume:Manage storage volumes'
+  )
+  _describe -t commands 'Storage commands' _c
 }
 
 __lxc_devices_by_container () {
