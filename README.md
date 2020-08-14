@@ -37,28 +37,6 @@ plugins=( [plugins...] lxd-completion-zsh)
 
 Put `_lxc` file into `$fpath` directory (e.g. defining `fpath=(~/.zsh/completion $fpath)`, place it in `~/.zsh/completion`)
 
-## TODOs
-
-- add `lxd` command completion
-
-- subcommands completion
-  - image
-  - init
-  - launch
-  - move
-  - operation
-  - publish
-  - query
-  - rename
-  - storage
-
-- list completion
-  - profile list
-  - snapshot list
-  - storage list
-  - network list
-  - operation list
-
 ## License
 
 MIT
