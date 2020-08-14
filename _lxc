@@ -1,6 +1,6 @@
 #compdef lxc
 
-# _lxd
+# _lxc
 #
 # Copyright (c) 2017 endaaman
 #
@@ -12,12 +12,6 @@ _lxc() {
   local selected_container
   declare -A opt_args
 
-  local opt_common=(
-    '(- *)'{-h,--help}'[Show help]' \
-    '--debug:[Enable debug mode]' \
-    '--verbose[Enable verbose mode]' \
-    '--force-local[Force using the local unix socket]' \
-  )
   local opt_container_control=(
     '--all[Run command against all containers]' \
     '--stateful[Store the container state (only for stop)]' \
@@ -27,7 +21,6 @@ _lxc() {
   _arguments -C \
     '--all[Print less common commands]' \
     '--version[Show client version]' \
-    $opt_common \
     '1: :__lxc_commands' \
     '*:: :->args'
   case $state in
@@ -41,13 +34,11 @@ _lxc() {
             ;;
           esac
           _arguments -C \
-            '1: :__lxc_alias_commands' \
-            $opt_common
+            '1: :__lxc_alias_commands'
         ;;
         (cluster)
           _arguments -C \
-            '1: :__lxc_cluster_commands' \
-            $opt_common
+            '1: :__lxc_cluster_commands'
         ;;
         (config)
           case $words[2] in
@@ -178,34 +169,48 @@ _lxc() {
           esac
           _arguments -C \
             '1: :__lxc_config_commands' \
-            '--expanded[Show the expanded configuration]' \
-            $opt_common
+            '--expanded[Show the expanded configuration]'
         ;;
         (console)
           _arguments -C \
-            '1:containers:__lxc_containers_running' \
-            $opt_common
+            '1:containers:__lxc_containers_running'
         ;;
         (copy)
-          # TODO: complete copy
+          _arguments -C \
+            {-c,--config}'[Config key/value to apply to the new instance]' \
+            {-d,--device}'[New key/value to apply to a specific device]' \
+            {-e,--ephemeral}'[Ephemeral instance]' \
+            '--instance-only[Copy the instance without its snapshots]' \
+            '--mode[Transfer mode. One of pull (default), push or relay (default "pull")]' \
+            '--no-rofiles[Create the instance with no profiles applied]' \
+            {-p,--profile}'[Profile to apply to the new instance]' \
+            '--refresh[Perform an incremental copy]' \
+            '--stateless[Copy a stateful instance stateless]' \
+            {-s,--storage}'[Storage pool name]' \
+            '--target[Cluster member name]' \
+            '--target-project[Copy to a project different from the source]'
         ;;
         (delete)
           _arguments -C \
-            '*:containers:__lxc_containers_stopped' \
-            $opt_common
+            '*:containers:__lxc_containers_stopped'
         ;;
         (exec)
           _arguments -C \
             '1:containers:__lxc_containers_running' \
-            '--env[An environment variable of the form HOME=/home/foo]' \
-            '-T[Disable pseudo-terminal allocation]' \
-            '-t[Force pseudo-terminal allocation]' \
-            '-n[Disable stdin (reads from /dev/null)]' \
-            '--mode=[Override the terminal mode (default: auto)]:mode:(auto interactive non-interactive)' \
-            $opt_common
+            '--cwd[Directory to run the command in (default /root)]' \
+            {-n,--disable-stdin}'[Disable stdin (reads from /dev/null)]' \
+            '--env[Environment variable to set (e.g. HOME=/home/foo)]' \
+            {-t,--force-interactive}'[Force pseudo-terminal allocation]' \
+            {-T,--force-noninteractive}'[Disable pseudo-terminal allocation]' \
+            '--group[Group ID to run the command as (default 0)]' \
+            '--mode[Override the terminal mode (auto, interactive or non-interactive) (default "auto")]' \
+            '--user[User ID to run the command as (default 0)]'
         ;;
         (export)
-          # TODO: complete export
+          _arguments -C \
+            '--compression[Define a compression algorithm: for backup or none]' \
+            '--instance-only[Whether or not to only backup the instance (without snapshots)]' \
+            '--optimized-storage[Use storage driver optimized format (can only be restored on a similar pool)]'
         ;;
         (file)
           case $words[2] in
@@ -234,13 +239,11 @@ _lxc() {
             "--uid=[Set the file's uid on push]" \
             "--mode=[Set the file's perms on push]" \
             ''{-p,--create-dirs}'[Create any directories necessary]' \
-            ''{-r,--recursive}'[Recursively push or pull files]' \
-            $opt_common
+            ''{-r,--recursive}'[Recursively push or pull files]'
         ;;
         (help)
           _arguments -C \
-            '1: :__lxc_commands' \
-            $opt_common
+            '1: :__lxc_commands'
         ;;
         (image)
           case $words[2] in
@@ -282,34 +285,38 @@ _lxc() {
               _arguments -C \
                 '2: :()' \
                 {-c,--columns=}"[Columns (default lfpdasu)]:Columns:_values -s '' $l" \
-                '--format=[Format]:Format:(csv json table yaml)' \
-                $opt_common
+                '--format=[Format]:Format:(csv json table yaml)'
             ;;
           esac
           _arguments -C \
-            '1: :__lxc_image_commands' \
+            '1: :__lxc_image_commands'
         ;;
         (import)
-          # TODO: complete import
+          _arguments -C \
+            '1: :_files' \
+            {-s,--storage=}'[Storage pool name]'
         ;;
         (info)
           _arguments -C \
             '1:containers:__lxc_containers_all' \
             '--resources[Show the resources available to the server]' \
             "--show-log[Show the container's last 100 log lines?]" \
-            $opt_common
+            '--target[Cluster member name]'
         ;;
         (launch|init)
           _arguments -C \
             '1: :__lxc_images' \
             {-c,--config=}'[Config key/value to apply to the new container (= map\[\])]' \
+            '--console=[Immediately attach to the console]' \
+            '--empty[Create an empty instance]' \
             {-e,--ephemeral}'[Ephemeral container]' \
             {-n,--network=}'[Network name]' \
+            '--no-profiles[Create the instance with no profiles applied]' \
             {-p,--profile=}'[Profile to apply to the new container]' \
             {-s,--storage=}'[Storage pool name]' \
             '--target=[Node name]' \
             {-t,--type=}'[Instance type]' \
-            $opt_common
+            '--vm[Create a virtual machine]'
         ;;
         (list)
           local l
@@ -323,42 +330,45 @@ _lxc() {
             {-c,--columns=}"[Columns (default: ns46tSL)]:Columns:_values -s '' $l" \
             '--fast[Fast mode (same as --columns=nsacPt)]' \
             '--format=[Format (default: table)]:Format:(csv json table yaml)' \
-            '--no-alias[Ignore aliases when determining what command to run]' \
-            $opt_common
+            '--no-alias[Ignore aliases when determining what command to run]'
         ;;
         (manpage)
           _arguments -C \
-            '1:Directory to put manpage to:_files' \
-            $opt_common
+            '1:Directory to put manpage to:_files'
         ;;
         (monitor)
           _arguments -C \
+            '1: :__lxc_containers_all' \
             '--loglevel=[Minimum level for log messages]:Log level:(info)' \
             '--pretty[Pretty rendering]' \
-            '--type=[Event type to listen for]:Type:(lifecycle logging)' \
-            $opt_common
+            '--type=[Event type to listen for]:Type:(lifecycle logging)'
         ;;
         (move)
-          # TODO: complete move
           _arguments -C \
-            $opt_common
+            {-c,--config}'[Config key/value to apply to the target instance]' \
+            {-d,--device}'[New key/value to apply to a specific device]' \
+            '--instance-only[Move the instance without its snapshots]' \
+            '--mode{Transfer mode. One of pull (default), push or relay. (default "pull")}' \
+            '--no-profiles[Unset all profiles on the target instance]' \
+            {-p,--profile}'[Profile to apply to the target instance]' \
+            --stateless'[Copy a stateful instance stateless]' \
+            {-s,--storage}'[Storage pool name]' \
+            '--target[Cluster member name]' \
+            '--target-project[Copy to a project different from the source]'
         ;;
         (network)
           _arguments -C \
-            '1: :__lxc_network_commands' \
-            $opt_common
+            '1: :__lxc_network_commands'
         ;;
         (operation)
-          # TODO: complete operation
+          # TODO: complete operation items
           _arguments -C \
-            '1: :__lxc_operation_commands' \
-            $opt_common
+            '1: :__lxc_operation_commands'
         ;;
         (pause)
           _arguments -C \
-            '--all[Run command against all containers]' \
             '1: :__lxc_containers_running' \
-            $opt_common
+            '--all[Run command against all containers]'
         ;;
         (profile)
           case $words[2] in
@@ -370,54 +380,53 @@ _lxc() {
             (assign|apply)
               _arguments -C \
                 '2: :__lxc_containers_all' \
-                "3: :_values -s , Profiles $(__get_lxc_profiles)" \
+                "3: :_values -s , Profiles $(__get_lxc_profiles)"
             ;;
             (copy|cp)
               _arguments -C \
                 '2: :__lxc_profiles' \
-                '3: :__lxc_profiles' \
+                '3: :__lxc_profiles'
             ;;
             (delete|rm|edit|show)
               _arguments -C \
-                '2: :__lxc_profiles' \
+                '2: :__lxc_profiles'
             ;;
             (get|set|unset)
               # TODO: complete profile keys
               _arguments -C \
-                '2: :__lxc_profiles' \
+                '2: :__lxc_profiles'
             ;;
             (list|ls)
               # TODO: complete container profiles
               _arguments -C \
-                '2: :__lxc_remotes' \
+                '2: :__lxc_remotes'
             ;;
             (rename|mv)
               # TODO: complete container profiles
               _arguments -C \
-                '2: :__lxc_profiles' \
+                '2: :__lxc_profiles'
             ;;
           esac
           _arguments -C \
-            '1: :__lxc_profile_commands' \
-            $opt_common
+            '1: :__lxc_profile_commands'
         ;;
         (publish)
           # TODO: complete publish
           _arguments -C \
-            '1: :__lxc_containers_all' \
-            $opt_common
+            '1: :__lxc_containers_all'
         ;;
         (query)
-          # TODO: complete query
           _arguments -C \
-            $opt_common
+            {-d,--data}'[Input data]' \
+            '--raw[Print the raw response]' \
+            {-X,--request}'[Action (defaults to GET) (default "GET")]' \
+            '--wait[Wait for the operation to complete]'
         ;;
         (remote)
           case $words[2] in
             (set-default|set-url|rename|remove)
               _arguments -C \
-                '2: :__lxc_remotes' \
-                $opt_common
+                '2: :__lxc_remotes'
             ;;
             (add)
               _arguments -C \
@@ -426,34 +435,30 @@ _lxc() {
                 '--auth-type=[Server authentication type (tls or macaroons)]:Auth type:(tls macaroons)' \
                 '--password[Remote admin password]' \
                 '--protocol=[Server protocol (lxd or simplestreams)]:Protocol:(tls macaroons)' \
-                '--public[Public image server]' \
+                '--public[Public image server]'
             ;;
           esac
           _arguments -C \
-            '1: :__lxc_remote_commands' \
-            $opt_common
+            '1: :__lxc_remote_commands'
         ;;
         (rename)
           _arguments -C \
             '1:containers:__lxc_containers_stopped' \
-            $opt_common
         ;;
         (restart)
           _arguments -C \
             '*:containers:__lxc_containers_running' \
             {-f,--force}'[Force the container to shutdown]' \
             '--timeout[Time to wait for the container before killing it]' \
-            $opt_container_control \
-            $opt_common
+            $opt_container_control
         ;;
         (restore)
           _arguments -C \
             '1:containers:__lxc_containers_all' \
-            '--stateful[Store the container state (only for stop)]' \
-            $opt_common
+            '--stateful[Store the container state (only for stop)]'
         ;;
         (shell)
-          _arguments -C \
+          _arguments -C -O \
             '1:containers:__lxc_containers_running' \
             '--cwd[Directory to run the command in (default /root)]' \
             {-n,--disable-stdin}'[Disable stdin (reads from /dev/null)]' \
@@ -463,26 +468,23 @@ _lxc() {
             '--group[Group ID to run the command as (default 0)]' \
             '--mode[Override the terminal mode (auto, interactive or non-interactive) (default "auto")]' \
             '--user[User ID to run the command as (default 0)]' \
-            $opt_common
+            '--[User ID to run the command as (default 0)]'
         ;;
         (snapshot)
           _arguments -C \
-            '1:containers:__lxc_containers_all' \
-            $opt_common
+            '1:containers:__lxc_containers_all'
         ;;
         (start)
           _arguments -C \
             '*:containers:__lxc_containers_stopped' \
-            $opt_container_control \
-            $opt_common
+            $opt_container_control
         ;;
         (stop)
           _arguments -C \
             '*:containers:__lxc_containers_running' \
             '--timeout[Time to wait for the container before killing it (= -1)]' \
             {-f,--force}'[Force the container to shutdown]' \
-            $opt_container_control \
-            $opt_common
+            $opt_container_control
         ;;
         (storage)
           case $words[2] in
@@ -502,17 +504,31 @@ _lxc() {
             ;;
           esac
           _arguments -C \
-            '1: :__lxc_storage_commands' \
-            $opt_common
+            '1: :__lxc_storage_commands'
         ;;
         (version)
-          _arguments -C \
-            $opt_common
+          # nop
         ;;
       esac
     ;;
   esac
+  _arguments -C -A '-*' \
+    '*: :__lxc_global_flags'
   return 0
+}
+
+__lxc_global_flags() {
+  local -a _c
+  _c=(
+    '--debug:Show all debug messages'
+    '--force-local:Force using the local unix socket'
+    {-h,--help}':Print help'
+    '--project:Override the source project'
+    {-q,--quiet}":Don't show progress information"
+    {-v,--verbose}':Show all information messages'
+    # '--version:Print version number'
+  )
+  _describe -o -t global_options 'global option' _c
 }
 
 __lxc_commands() {
@@ -528,8 +544,9 @@ __lxc_commands() {
     'export:Export instance backups'
     'file:Manage files in containers'
     'help:Help about any command'
-    'finger:Check if the LXD server is alive' # old sub command
+    # 'finger:Check if the LXD server is alive' # old sub command
     'image:Manipulate container images'
+    'import:Import instance backups'
     'info:Show container or server information'
     'init:Create containers from images'
     'launch:Create and start containers from images'
@@ -572,10 +589,12 @@ __lxc_alias_commands() {
 __lxc_cluster_commands() {
   local -a _c
   _c=(
-    'list:List all nodes in the cluster'
-    'show:Show details of a node'
-    'rename:Rename a cluster node'
-    'delete:Delete a node from the cluster.'
+    'edit:Edit cluster member configurations as YAML'
+    'enable:Enable clustering on a single non-clustered LXD server'
+    'list:List all the cluster members'
+    'remove:Remove a member from the cluster'
+    'rename:Rename a cluster member'
+    'show:Show details of a cluster member'
   )
   _describe -t commands 'Cluster commands' _c
 }
