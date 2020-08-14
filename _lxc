@@ -14,7 +14,7 @@ _lxc() {
 
   local opt_common=(
     '(- *)'{-h,--help}'[Show help]' \
-    '--debug[Enable debug mode]' \
+    '--debug:[Enable debug mode]' \
     '--verbose[Enable verbose mode]' \
     '--force-local[Force using the local unix socket]' \
   )
@@ -204,6 +204,9 @@ _lxc() {
             '--mode=[Override the terminal mode (default: auto)]:mode:(auto interactive non-interactive)' \
             $opt_common
         ;;
+        (export)
+          # TODO: complete export
+        ;;
         (file)
           case $words[2] in
             (push)
@@ -285,6 +288,9 @@ _lxc() {
           esac
           _arguments -C \
             '1: :__lxc_image_commands' \
+        ;;
+        (import)
+          # TODO: complete import
         ;;
         (info)
           _arguments -C \
@@ -446,10 +452,17 @@ _lxc() {
             '--stateful[Store the container state (only for stop)]' \
             $opt_common
         ;;
-        (restart)
+        (shell)
           _arguments -C \
-            '*:containers:__lxc_containers_running' \
-            $opt_container_control \
+            '1:containers:__lxc_containers_running' \
+            '--cwd[Directory to run the command in (default /root)]' \
+            {-n,--disable-stdin}'[Disable stdin (reads from /dev/null)]' \
+            '--env[Environment variable to set (e.g. HOME=/home/foo)]' \
+            {-t,--force-interactive}'[Force pseudo-terminal allocation]' \
+            {-T,--force-noninteractive}'[Disable pseudo-terminal allocation]' \
+            '--group[Group ID to run the command as (default 0)]' \
+            '--mode[Override the terminal mode (auto, interactive or non-interactive) (default "auto")]' \
+            '--user[User ID to run the command as (default 0)]' \
             $opt_common
         ;;
         (snapshot)
@@ -492,6 +505,10 @@ _lxc() {
             '1: :__lxc_storage_commands' \
             $opt_common
         ;;
+        (version)
+          _arguments -C \
+            $opt_common
+        ;;
       esac
     ;;
   esac
@@ -508,8 +525,10 @@ __lxc_commands() {
     'copy:Copy containers within or in between LXD instances'
     'delete:Delete containers and snapshots'
     'exec:Execute commands in containers'
+    'export:Export instance backups'
     'file:Manage files in containers'
-    'finger:Check if the LXD server is alive'
+    'help:Help about any command'
+    'finger:Check if the LXD server is alive' # old sub command
     'image:Manipulate container images'
     'info:Show container or server information'
     'init:Create containers from images'
@@ -522,6 +541,7 @@ __lxc_commands() {
     'operation:List, show and delete background operations'
     'pause:Pause containers'
     'profile:Manage container configuration profiles'
+    'project:Manage projects'
     'publish:Publish containers as images'
     'query:Send a raw query to LXD'
     'remote:Manage the list of remote LXD servers'
@@ -529,6 +549,7 @@ __lxc_commands() {
     'restart:Restart containers'
     'restore:Restore containers from snapshots'
     'snapshot:Create container snapshots'
+    'shell:Execute commands in instances'
     'start:Start containers'
     'stop:Stop containers'
     'storage:Manage storage pools and volumes'
