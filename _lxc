@@ -458,7 +458,7 @@ _lxc() {
             '--stateful[Store the container state (only for stop)]'
         ;;
         (shell)
-          _arguments -C -O \
+          _arguments -C \
             '1:containers:__lxc_containers_running' \
             '--cwd[Directory to run the command in (default /root)]' \
             {-n,--disable-stdin}'[Disable stdin (reads from /dev/null)]' \
@@ -467,8 +467,7 @@ _lxc() {
             {-T,--force-noninteractive}'[Disable pseudo-terminal allocation]' \
             '--group[Group ID to run the command as (default 0)]' \
             '--mode[Override the terminal mode (auto, interactive or non-interactive) (default "auto")]' \
-            '--user[User ID to run the command as (default 0)]' \
-            '--[User ID to run the command as (default 0)]'
+            '--user[User ID to run the command as (default 0)]'
         ;;
         (snapshot)
           _arguments -C \
