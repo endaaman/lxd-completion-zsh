@@ -837,12 +837,12 @@ __lxc_containers_all () {
 
 __lxc_images_as_fingerprint () {
   local -a _l
-  _l=(${(@f)"$(_call_program images lxc image list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[\ \t]+/,"",a[i]);sub(/[\ \t]+$/,"",a[i]);}; (a[2]=="") ? b=" (not aliased)" : b=" (aliased as " a[2] ")" ; print a[3] ":" a[5] b }' )"})
+  _l=(${(@f)"$(_call_program images lxc image list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[ \t]+/,"",a[i]);sub(/[ \t]+$/,"",a[i]);}; (a[2]=="") ? b=" (not aliased)" : b=" (aliased as " a[2] ")" ; print a[3] ":" a[5] b }' )"})
   _describe -t images_as_fingerprint 'Images as fingerprint' _l
 }
 
 __lxc_images_as_alias () {
-  _l=(${(@f)"$(_call_program images lxc image alias list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[\ \t]+/,"",a[i]);sub(/[\ \t]+$/,"",a[i]);}; (a[4]=="") ? b="" : b=" - " a[4] ;print a[2] ":" a[3] b }' )"})
+  _l=(${(@f)"$(_call_program images lxc image alias list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[ \t]+/,"",a[i]);sub(/[ \t]+$/,"",a[i]);}; (a[4]=="") ? b="" : b=" - " a[4] ;print a[2] ":" a[3] b }' )"})
   _describe -t images_as_alias 'Images as alias' _l
 }
 
