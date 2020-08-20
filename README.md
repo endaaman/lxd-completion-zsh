@@ -2,6 +2,8 @@
 
 A [zsh](http://zsh.org) completion for `lxc` command of [LXD](https://linuxcontainers.org/lxd/).
 
+![screenshot](http://static.endaaman.me/images/github/lxc-completion.png)
+
 ## Installation
 
 ### [Antigen](https://github.com/zsh-users/antigen)
