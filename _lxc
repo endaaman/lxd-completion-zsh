@@ -522,8 +522,7 @@ _lxc() {
 }
 
 __lxc_global_flags() {
-  local -a _c
-  _c=(
+  local -a _l=(
     '--debug:Show all debug messages'
     '--force-local:Force using the local unix socket'
     {-h,--help}':Print help'
@@ -532,12 +531,11 @@ __lxc_global_flags() {
     {-v,--verbose}':Show all information messages'
     # '--version:Print version number'
   )
-  _describe -o -t global_options 'global option' _c
+  _describe -o -t global_options 'global option' _l
 }
 
 __lxc_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'alias:Manage command aliases'
     'cluster:Manage cluster nodes'
     'config:Change container or server configuration options'
@@ -576,23 +574,21 @@ __lxc_commands() {
     'storage:Manage storage pools and volumes'
     'version:Print the version number of this client tool'
   )
-  _describe -t commands Commands _c
+  _describe -t commands Commands _l
 }
 
 __lxc_alias_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'add:Add a new alias <alias> pointing to <target>.'
     'remove:Remove the alias <alias>.'
     'list:List all the aliases.'
     'rename:Rename remote <old alias> to <new alias>.'
   )
-  _describe -t commands 'Alias commands' _c
+  _describe -t commands 'Alias commands' _l
 }
 
 __lxc_cluster_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'edit:Edit cluster member configurations as YAML'
     'enable:Enable clustering on a single non-clustered LXD server'
     'list:List all the cluster members'
@@ -600,12 +596,11 @@ __lxc_cluster_commands() {
     'rename:Rename a cluster member'
     'show:Show details of a cluster member'
   )
-  _describe -t commands 'Cluster commands' _c
+  _describe -t commands 'Cluster commands' _l
 }
 
 __lxc_config_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'get:Get container or server configuration key'
     'set:Set container or server configuration key'
     'unset:Unset container or server configuration key'
@@ -617,12 +612,11 @@ __lxc_config_commands() {
     'device:Device management'
     'trust:Client trust store management'
   )
-  _describe -t commands 'Config commands' _c
+  _describe -t commands 'Config commands' _l
 }
 
 __lxc_config_device_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'add:Add a device to a container'
     'get:Get a device property'
     'set:Set a device property'
@@ -632,22 +626,21 @@ __lxc_config_device_commands() {
     'show:Show full device details for container'
     'remove:Remove device from container'
   )
-  _describe -t commands 'Config device commands' _c
+  _describe -t commands 'Config device commands' _l
 }
 
 
 __lxc_config_metadata_commands() {
-  local -a _c
+  local -a _l
   _c=(
     'show:Show the container metadata.yaml content'
     'edit:Edit the container metadata.yaml, either by launching external editor or reading STDIN'
   )
-  _describe -t commands 'Config metadata commands' _c
+  _describe -t commands 'Config metadata commands' _l
 }
 
 __lxc_config_template_commands() {
-  local -a _c
-  _c=(
+  local -a _c=(
     'list:List the names of template files for a container.'
     'show:Show the content of a template file for a container'
     'create:Add an empty template file for a container'
@@ -655,33 +648,30 @@ __lxc_config_template_commands() {
     'delete:Delete a template file for a container'
 
   )
-  _describe -t commands 'Config template commands' _c
+  _describe -t commands 'Config template commands' _l
 }
 
 __lxc_config_trust_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'list:List all trusted certs'
     'add:Add certfile.crt to trusted hosts'
     'remove:Remove the cert from trusted hosts'
   )
-  _describe -t commands 'Config trust commands' _c
+  _describe -t commands 'Config trust commands' _l
 }
 
 __lxc_file_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'pull:Pull file from container'
     'push:Push file to container'
     'delete:Delete files in containers.'
     'edit:Edit files in containers using the default text editor'
   )
-  _describe -t commands 'File commands' _c
+  _describe -t commands 'File commands' _l
 }
 
 __lxc_image_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'copy:Copy an image from one LXD daemon to another over the network'
     'delete:Delete one or more images from the LXD image store'
     'import:Import images into the image store'
@@ -693,23 +683,21 @@ __lxc_image_commands() {
     'alias:Manage alias for image in the LXD image store'
     'refresh:Refresh images'
   )
-  _describe -t commands 'Image commands' _c
+  _describe -t commands 'Image commands' _l
 }
 
 __lxc_image_alias_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'create:Create aliases for existing images'
     'rename:Rename aliases'
     'delete:Delete image alias'
     'list:List image aliases'
   )
-  _describe -t commands 'Image alias commands' _c
+  _describe -t commands 'Image alias commands' _l
 }
 
 __lxc_profile_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'add:Add profiles to containers'
     'assign:Assign sets of profiles to containers'
     'copy:Copy profiles'
@@ -725,12 +713,11 @@ __lxc_profile_commands() {
     'show:Show profile configurations'
     'unset:Unset profile configuration keys'
   )
-  _describe -t commands 'Profile commands' _c
+  _describe -t commands 'Profile commands' _l
 }
 
 __lxc_remote_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'add:Add the remote <remote> at <url>'
     'remove:Remove the remote <remote>'
     'list:List all remotes'
@@ -739,12 +726,11 @@ __lxc_remote_commands() {
     'set-default:Set the default remote'
     'get-default:Print the default remote'
   )
-  _describe -t commands 'Remote commands' _c
+  _describe -t commands 'Remote commands' _l
 }
 
 __lxc_network_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'attach:Attach network interfaces to containers'
     'attach-profile:Attach network interfaces to profiles'
     'create:Create new networks'
@@ -761,22 +747,20 @@ __lxc_network_commands() {
     'show:Show network configurations'
     'unset:Unset network configuration keys'
   )
-  _describe -t commands 'Network commands' _c
+  _describe -t commands 'Network commands' _l
 }
 
 __lxc_operation_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'delete:Delete a background operation (will attempt to cancel)'
     'list:List background operations'
     'show:Show details on a background operation'
   )
-  _describe -t commands 'Operation commands' _c
+  _describe -t commands 'Operation commands' _l
 }
 
 __lxc_storage_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'create:Create storage pools'
     'delete:Delete storage pools'
     'edit:Edit storage pool configurations as YAML'
@@ -788,12 +772,11 @@ __lxc_storage_commands() {
     'unset:Unset storage pool configuration keys'
     'volume:Manage storage volumes'
   )
-  _describe -t commands 'Storage commands' _c
+  _describe -t commands 'Storage commands' _l
 }
 
 __lxc_storage_volume_commands() {
-  local -a _c
-  _c=(
+  local -a _l=(
     'attach:Attach new storage volumes to containers'
     'attach-profile:Attach new storage volumes to profiles'
     'copy:Copy storage volumes'
@@ -812,20 +795,18 @@ __lxc_storage_volume_commands() {
     'snapshot:Snapshot storage volumes'
     'unset:Unset storage volume configuration keys'
   )
-  _describe -t commands 'Storage volume commands' _c
+  _describe -t commands 'Storage volume commands' _l
 
 
 }
 
 __lxc_devices_by_container () {
-  local -a _devices
-  _devices=(${(f)"$(_call_program devices lxc config device list $selected_container)"})
-  _describe "Devices of $selected_container" _devices
+  local -a _l=(${(f)"$(_call_program devices lxc config device list $selected_container)"})
+  _describe "Devices of $selected_container" _l
 }
 
 __lxc_list_columns () {
-  local -a l
-  l=(
+  local -a _l=(
     '4:IPv4 address'
     '6:IPv6 address'
     'a:Architecture'
@@ -842,12 +823,11 @@ __lxc_list_columns () {
     't:Type (persistent or ephemeral)'
     'L:Location of the container (e.g. its cluster member)'
   )
-  _describe "Columns" l
+  _describe "Columns" _l
 }
 
 __lxc_device_types () {
-  local -a _c
-  _c=(
+  local -a _l=(
     'none:Inheritance blocker'
     'nic:Network interface'
     'disk:Mountpoint inside the container'
@@ -858,37 +838,28 @@ __lxc_device_types () {
     'infiniband:Infiniband device'
     'proxy:Proxy device'
   )
-  _describe 'Device types' _c
+  _describe 'Device types' _l
 }
 
 __lxc_containers_running () {
-  local -a _containers
-  _containers=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'RUNNING$' | sed -e "s/RUNNING//")"})
-  _describe -t containers 'Running Containers' _containers
+  local -a _l=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'RUNNING$' | sed -e "s/RUNNING//")"})
+  _describe -t containers 'Running Containers' _l
 }
 
 __lxc_containers_stopped () {
-  local -a _containers
-  _containers=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'STOPPED$' | sed -e "s/STOPPED//")"})
-  _describe -t containers 'Stopped containers' _containers
+  local -a _l=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2 $4}' | egrep 'STOPPED$' | sed -e "s/STOPPED//")"})
+  _describe -t containers 'Stopped containers' _l
 }
 
 __lxc_containers_all () {
-  local -a _containers
-  _containers=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2}' | egrep -v '^(\||^$)')"})
-  _describe -t containers 'All containers' _containers
-}
-
-
-__lxc_images_as_fingerprint () {
-  _describe -t images_as_fingerprint 'Images as fingerprint' _l
+  local -a _l=(${(@f)"$(_call_program containers lxc list --fast | tail -n +4 | awk '{print $2}' | egrep -v '^(\||^$)')"})
+  _describe -t containers 'All containers' _l
 }
 
 __lxc_images_as_fingerprint () {
   # local -a _l=(${(@f)"$(_call_program images lxc image list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[ \t]+/,"",a[i]);sub(/[ \t]+$/,"",a[i]);}; (a[2]=="") ? b=" (not aliased)" : b=" (aliased as " a[2] ")" ; print a[3] ":" a[5] b }' )"})
 
-  local -a _ff
-
+  local -a _l
   _call_program images lxc image list --format=csv | sed -e 's/:/\\:/g' | while read line
   do
     local alias=$(echo $line| cut -d ',' -f 1)
@@ -897,24 +868,24 @@ __lxc_images_as_fingerprint () {
     else
       suffix='(not aliased)'
     fi
-    _ff=($_ff "$(echo $line | awk -F ',' '{printf "%s:%-44s -- ",$2,$4}')$suffix")
+    _l=($_l "$(echo $line | awk -F ',' '{printf "%s:%-44s -- ",$2,$4}')$suffix")
   done
 
-  _describe -t images_as_fingerprint 'Images as fingerprint' _ff
+  _describe -t images_as_fingerprint 'Images as fingerprint' _l
 }
 
 __lxc_images_as_alias () {
   # local -a _l=(${(@f)"$(_call_program images lxc image alias list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[ \t]+/,"",a[i]);sub(/[ \t]+$/,"",a[i]);}; (a[4]=="") ? b="" : b=" - " a[4] ;print a[2] ":" a[3] b }' )"})
 
-  local -a _aa
+  local -a _l
   _call_program images lxc image list --format=csv | sed -e 's/:/\\:/g' | while read line
   do
     local alias=$(echo $line| cut -d ',' -f 1)
     if [ -n "$alias" ]; then
-      _aa=($_aa "$(echo $line | awk -F ',' '{printf "%s: %s -- %s",$1,$2,$4}')")
+      _l=($_l "$(echo $line | awk -F ',' '{printf "%s: %s -- %s",$1,$2,$4}')")
     fi
   done
-  _describe -t images_as_alias 'Images as alias' _aa
+  _describe -t images_as_alias 'Images as alias' _l
 }
 
 __lxc_images () {
@@ -923,26 +894,22 @@ __lxc_images () {
 }
 
 __lxc_aliases () {
-  local -a _l
-  _l=(${(@f)"$(_call_program aliases lxc alias list | tail -n +4 | egrep '^\|' | awk '{print $2 ":" $4}')"})
+  local -a _l=(${(@f)"$(_call_program aliases lxc alias list | tail -n +4 | egrep '^\|' | awk '{print $2 ":" $4}')"})
   _describe -t aliases 'Aliases' _l
 }
 
 __lxc_remotes () {
-  local -a _l
-  _l=(${(@f)"$(_call_program remotes lxc remote list | tail -n +4 | egrep -e '^\|' | sed -e 's/(default)//' | awk '{print $2 ":" $4}')"})
+  local -a _l=(${(@f)"$(_call_program remotes lxc remote list | tail -n +4 | egrep -e '^\|' | sed -e 's/(default)//' | awk '{print $2 ":" $4}')"})
   _describe -t remotes 'Remotes' _l
 }
 
 __lxc_profiles () {
-  local -a _l
-  _l=(${(@f)"$(_call_program profiles lxc profile list | tail -n +4 | egrep -e '^\|' | awk '{print $2 ":used by " $4 " containers" }' )"})
+  local -a _l=(${(@f)"$(_call_program profiles lxc profile list | tail -n +4 | egrep -e '^\|' | awk '{print $2 ":used by " $4 " containers" }' )"})
   _describe -t profiles 'Profiles' _l
 }
 
 __lxc_storages () {
-  local -a _l
-  _l=(${(@f)"$(_call_program profiles lxc storage list | tail -n +4 | egrep -e '^\|' | awk '{print $2 }')"})
+  local -a _l=(${(@f)"$(_call_program profiles lxc storage list | tail -n +4 | egrep -e '^\|' | awk '{print $2 }')"})
   _describe -t storages 'Storages' _l
 }
 
