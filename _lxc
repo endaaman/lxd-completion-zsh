@@ -107,7 +107,7 @@ _lxc() {
                   fi
                   _arguments -C \
                     '3:containers:__lxc_containers_all' \
-                    '4:device type:__lxc_device_types'
+                    '5:device type:__lxc_device_types'
                 ;;
                 (get|unset)
                   if [ $#words[@] -eq 6 ]; then
@@ -621,7 +621,6 @@ __lxc_config_commands() {
     'unset:Unset container or server configuration key'
     'show:Show container or server configuration'
     'edit:Edit container or server configuration key'
-
     'metadata:Container metadata'
     'template:Container templates'
     'device:Device management'
@@ -655,7 +654,7 @@ __lxc_config_metadata_commands() {
 }
 
 __lxc_config_template_commands() {
-  local -a _c=(
+  local -a _l=(
     'list:List the names of template files for a container.'
     'show:Show the content of a template file for a container'
     'create:Add an empty template file for a container'
