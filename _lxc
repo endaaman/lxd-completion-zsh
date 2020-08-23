@@ -253,6 +253,11 @@ _lxc() {
                   _arguments -C \
                     '4: :__lxc_images_as_fingerprint'
                 ;;
+                (list)
+                  _arguments -C \
+                    '2: :()' \
+                    '--format=[Format]:Format:(csv json table yaml)'
+                ;;
                 (delete|rename)
                   _arguments -C \
                     '3: :__lxc_images_as_alias'
@@ -694,10 +699,10 @@ __lxc_image_commands() {
 __lxc_image_alias_commands() {
   local -a _c
   _c=(
-    'create:Create a new alias for an existing image'
-    'rename:Rename an alias'
-    'delete:Delete an alias'
-    'list:List the aliases. Filters may be part of the image hash or part of the image alias name'
+    'create:Create aliases for existing images'
+    'rename:Rename aliases'
+    'delete:Delete image alias'
+    'list:List image aliases'
   )
   _describe -t commands 'Image alias commands' _c
 }
@@ -874,15 +879,42 @@ __lxc_containers_all () {
   _describe -t containers 'All containers' _containers
 }
 
+
 __lxc_images_as_fingerprint () {
-  local -a _l
-  _l=(${(@f)"$(_call_program images lxc image list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[ \t]+/,"",a[i]);sub(/[ \t]+$/,"",a[i]);}; (a[2]=="") ? b=" (not aliased)" : b=" (aliased as " a[2] ")" ; print a[3] ":" a[5] b }' )"})
   _describe -t images_as_fingerprint 'Images as fingerprint' _l
 }
 
+__lxc_images_as_fingerprint () {
+  # local -a _l=(${(@f)"$(_call_program images lxc image list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[ \t]+/,"",a[i]);sub(/[ \t]+$/,"",a[i]);}; (a[2]=="") ? b=" (not aliased)" : b=" (aliased as " a[2] ")" ; print a[3] ":" a[5] b }' )"})
+
+  local -a _ff
+
+  _call_program images lxc image list --format=csv | sed -e 's/:/\\:/g' | while read line
+  do
+    local alias=$(echo $line| cut -d ',' -f 1)
+    if [ -n "$alias" ]; then
+      suffix="$alias"
+    else
+      suffix='(not aliased)'
+    fi
+    _ff=($_ff "$(echo $line | awk -F ',' '{printf "%s:%-44s -- ",$2,$4}')$suffix")
+  done
+
+  _describe -t images_as_fingerprint 'Images as fingerprint' _ff
+}
+
 __lxc_images_as_alias () {
-  _l=(${(@f)"$(_call_program images lxc image alias list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[ \t]+/,"",a[i]);sub(/[ \t]+$/,"",a[i]);}; (a[4]=="") ? b="" : b=" - " a[4] ;print a[2] ":" a[3] b }' )"})
-  _describe -t images_as_alias 'Images as alias' _l
+  # local -a _l=(${(@f)"$(_call_program images lxc image alias list | tail -n +4 | egrep -e '^\|' | awk '{split($0,a,"|"); for(i in a){ sub(/^[ \t]+/,"",a[i]);sub(/[ \t]+$/,"",a[i]);}; (a[4]=="") ? b="" : b=" - " a[4] ;print a[2] ":" a[3] b }' )"})
+
+  local -a _aa
+  _call_program images lxc image list --format=csv | sed -e 's/:/\\:/g' | while read line
+  do
+    local alias=$(echo $line| cut -d ',' -f 1)
+    if [ -n "$alias" ]; then
+      _aa=($_aa "$(echo $line | awk -F ',' '{printf "%s: %s -- %s",$1,$2,$4}')")
+    fi
+  done
+  _describe -t images_as_alias 'Images as alias' _aa
 }
 
 __lxc_images () {
