@@ -255,8 +255,8 @@ _lxc() {
                 ;;
                 (list)
                   _arguments -C \
-                    '2: :()' \
-                    '--format=[Format]:Format:(csv json table yaml)'
+                    '4: :()' \
+                    '--format=[Format (csv|json|table|yaml) (default "table")]:Format:(csv json table yaml)'
                 ;;
                 (delete|rename)
                   _arguments -C \
@@ -288,9 +288,9 @@ _lxc() {
                 'p[Whether image is public]' 'd[Description]' 'a[Architecture]' \
                 's[Size]' 'u[Upload date]'"
               _arguments -C \
-                '2: :()' \
+                '3: :()' \
                 {-c,--columns=}"[Columns (default lfpdasu)]:Columns:_values -s '' $l" \
-                '--format=[Format]:Format:(csv json table yaml)'
+                '--format=[Format (csv|json|table|yaml) (default "table")]:Format:(csv json table yaml)'
             ;;
           esac
           _arguments -C \
@@ -334,7 +334,7 @@ _lxc() {
           _arguments -C \
             {-c,--columns=}"[Columns (default: ns46tSL)]:Columns:_values -s '' $l" \
             '--fast[Fast mode (same as --columns=nsacPt)]' \
-            '--format=[Format (default: table)]:Format:(csv json table yaml)' \
+            '--format=[Format (csv|json|table|yaml) (default "table")]:Format:(csv json table yaml)'
             '--no-alias[Ignore aliases when determining what command to run]'
         ;;
         (manpage)
@@ -374,6 +374,21 @@ _lxc() {
           _arguments -C \
             '1: :__lxc_containers_running' \
             '--all[Run command against all containers]'
+        ;;
+        (project)
+          case $words[2] in
+            (edit|delete|switch|rename|show|get|set)
+              _arguments -C \
+                '2: :__lxc_projects'
+            ;;
+            (list|ls)
+              _arguments -C \
+                '3: :()' \
+                '--format=[Format (csv|json|table|yaml) (default "table")]:Format:(csv json table yaml)'
+            ;;
+          esac
+          _arguments -C \
+            '1: :__lxc_project_commands'
         ;;
         (profile)
           case $words[2] in
@@ -796,8 +811,22 @@ __lxc_storage_volume_commands() {
     'unset:Unset storage volume configuration keys'
   )
   _describe -t commands 'Storage volume commands' _l
+}
 
-
+__lxc_project_commands() {
+  local -a _l=(
+    'create:Create projects'
+    'delete:Delete projects'
+    'edit:Edit project configurations as YAML'
+    'get:Get values for project configuration keys'
+    'list:List projects'
+    'rename:Rename projects'
+    'set:Set project configuration keys'
+    'show:Show project options'
+    'switch:Switch the current project'
+    'unset:Unset project configuration keys'
+  )
+  _describe -t commands 'Project commands' _l
 }
 
 __lxc_devices_by_container () {
@@ -906,6 +935,11 @@ __lxc_remotes () {
 __lxc_profiles () {
   local -a _l=(${(@f)"$(_call_program profiles lxc profile list | tail -n +4 | egrep -e '^\|' | awk '{print $2 ":used by " $4 " containers" }' )"})
   _describe -t profiles 'Profiles' _l
+}
+
+__lxc_projects() {
+  local -a _l=(${(@f)"$(_call_program profiles lxc project list --format=csv | cut -d ',' -f 1 | sed -e 's/ (current)/:current/')"})
+  _describe -t profiles 'Projects' _l
 }
 
 __lxc_storages () {
