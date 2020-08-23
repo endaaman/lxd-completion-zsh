@@ -101,30 +101,35 @@ _lxc() {
             (device)
               case $words[3] in
                 (add)
-                  if [ $#words[@] -gt 4 ]; then
+                  # lxc config device add <container> <name> <type> <key1>=<value1>
+                  #                   3   4           5      6
+                  if [ $#words[@] -gt 6 ]; then
                     _arguments -C \
-                      "*:keys:_sep_parts '$(__get_lxc_keys_by_device $words[5])' ="
+                      "*:key-values:_sep_parts '$(__get_lxc_keys_by_device $words[6])' = '($(ls))'"
                   fi
                   _arguments -C \
                     '3:containers:__lxc_containers_all' \
+                    '4: :_files' \
                     '5:device type:__lxc_device_types'
                 ;;
                 (get|unset)
                   if [ $#words[@] -eq 6 ]; then
-                    local type
-                    type=$(lxc config device get $words[4] $words[5] type)
-                    _arguments -C "*:keys:($(__get_lxc_keys_by_device $type))"
+                    local type=$(lxc config device get $words[4] $words[5] type)
+                    _arguments -C "*:key-values:($(__get_lxc_keys_by_device $type))"
                   fi
                   selected_container=$words[4]
                   _arguments -C \
                     '3:containers:__lxc_containers_all' \
                     '4:devices:__lxc_devices_by_container' \
                 ;;
+                # lxc config device set <container> <name> <key1>=<value1>
+                #                   3   4           5      6
                 (set)
                   if [ $#words[@] -eq 6 ]; then
-                    local type
-                    type=$(lxc config device get $words[4] $words[5] type)
-                    _arguments -C "*:keys:($(__get_lxc_keys_by_device $type))"
+                    local type=$(lxc config device get $words[4] $words[5] type)
+                    _arguments -C \
+                      "*:key-values:_sep_parts '$(__get_lxc_keys_by_device $type)' = ($(ls))" \
+                      '7:files:_files'
                   fi
                   selected_container=$words[4]
                   _arguments -C \
@@ -133,10 +138,9 @@ _lxc() {
                 ;;
                 (override)
                   if [ $#words[@] -gt 5 ]; then
-                    local type
-                    type=$(lxc config device get $words[4] $words[5] type)
+                    local type=$(lxc config device get $words[4] $words[5] type)
                     _arguments -C \
-                      "*:keys:_sep_parts '$(__get_lxc_keys_by_device $type)' ="
+                      "*:key-values:_sep_parts '$(__get_lxc_keys_by_device $type)' ="
                   fi
                   selected_container=$words[4]
                   _arguments -C \
@@ -324,17 +328,16 @@ _lxc() {
             '--vm[Create a virtual machine]'
         ;;
         (list)
-          local l
           # c.f https://github.com/lxc/lxd/blob/master/lxc/list.go
-          l="'Columns' '4[IPv4 address]' '6[IPv6 address]' 'a[Architecture]' 'b[Storage pool]' \
+          local _l="'Columns' '4[IPv4 address]' '6[IPv6 address]' 'a[Architecture]' 'b[Storage pool]' \
             'c[Creation date]' 'd[Description]' 'l[Last used date]' 'n[Name]' 'N[Number of Processes]' \
             \"p[PID of the container's init process]\" 'P[Profiles]' 's[State]' \
             'S[Number of snapshots]' 't[Type (persistent or ephemeral)]' \
             'L[Location of the container (e.g. its cluster member)]'"
           _arguments -C \
-            {-c,--columns=}"[Columns (default: ns46tSL)]:Columns:_values -s '' $l" \
+            {-c,--columns=}"[Columns (default: ns46tSL)]:Columns:_values -s '' $_l" \
             '--fast[Fast mode (same as --columns=nsacPt)]' \
-            '--format=[Format (csv|json|table|yaml) (default "table")]:Format:(csv json table yaml)'
+            '--format=[Format (csv|json|table|yaml) (default "table")]:Format:(csv json table yaml)' \
             '--no-alias[Ignore aliases when determining what command to run]'
         ;;
         (manpage)
