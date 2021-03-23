@@ -6,13 +6,17 @@ Zsh completion for `lxc` and `lxd` commands of [LXD](https://linuxcontainers.org
 
 ## Installation
 
-### [Antigen](https://github.com/zsh-users/antigen)
+### Using a plugin manager (recommended)
+
+This way is recommended. The `lxc` command updates frequently and this repository as its completion does the same. Therefore, using a plugin manager, you can get the immediate updates when I apply them.
+
+[Antigen](https://github.com/zsh-users/antigen)
 
 ```sh
 antigen bundle 'endaaman/lxd-completion-zsh'
 ```
 
-### [zplug](https://github.com/zplug/zplug)
+[zplug](https://github.com/zplug/zplug)
 
 ```sh
 zplug 'endaaman/lxd-completion-zsh'
